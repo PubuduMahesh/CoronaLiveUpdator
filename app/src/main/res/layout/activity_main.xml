@@ -67,6 +67,7 @@
             android:columnCount="2">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_total_cases"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
@@ -167,6 +168,7 @@
 
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_total_deaths"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_rowWeight="1"
