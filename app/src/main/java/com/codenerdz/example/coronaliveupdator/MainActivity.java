@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView suspectedCases;
     private CardView cardViewTotalCases;
     private CardView cardViewTotalDeaths;
+    private CardView cardViewTotalRecovers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         cardViewTotalCases = (CardView) findViewById(R.id.card_total_cases);
         cardViewTotalDeaths = (CardView) findViewById(R.id.card_total_deaths);
+        cardViewTotalRecovers = (CardView) findViewById(R.id.card_total_recovers);
 
         getSupportActionBar().setTitle("   COVID-19 SRI LANKA UPDATER");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#20d2f4")));
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         cardViewTotalCases.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                openTotalCasesDialogFragment();
+                openGraphDrawingFragment(ConstantToolkit.DAILY_CONFIRMED_CASES_FRAGMENT);
                 return true;
             }
         });
@@ -102,26 +104,25 @@ public class MainActivity extends AppCompatActivity {
         cardViewTotalDeaths.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                openTotalDeathsDialogFragment();
+                openGraphDrawingFragment(ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT);
+                return true;
+            }
+        });
+
+        cardViewTotalRecovers.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openGraphDrawingFragment(ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT);
                 return true;
             }
         });
     }
 
-    private void openTotalCasesDialogFragment()
+    private void openGraphDrawingFragment(String tag)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
         GraphDrawer graphFragment = new GraphDrawer();
-        graphFragment.show(fragmentManager, ConstantToolkit.DAILY_CONFIRMED_CASES_FRAGMENT);
-
-
-    }
-
-    private void openTotalDeathsDialogFragment()
-    {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        GraphDrawer graphFragment = new GraphDrawer();
-        graphFragment.show(fragmentManager,ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT);
+        graphFragment.show(fragmentManager, tag);
 
 
     }

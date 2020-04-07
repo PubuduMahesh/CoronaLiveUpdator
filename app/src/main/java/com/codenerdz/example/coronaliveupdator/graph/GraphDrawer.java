@@ -89,6 +89,11 @@ public class GraphDrawer extends DialogFragment {
             webView.loadUrl("file:///android_asset/"+"html/dailyDeathsLineChart.html");
             graphType = ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT;
         }
+        else if(getFragmentManager().findFragmentByTag(ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT) != null)
+        {
+            webView.loadUrl("file:///android_asset/"+"html/dailyRecoversLineChart.html");
+            graphType = ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT;
+        }
 
     }
 
@@ -126,6 +131,9 @@ public class GraphDrawer extends DialogFragment {
                                 break;
                             case ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT:
                                 apiSelectionAttribute = "deaths";
+                                break;
+                            case ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT:
+                                apiSelectionAttribute = "recovered";
                                 break;
                             default:
                                     break;

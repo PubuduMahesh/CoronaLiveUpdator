@@ -2,7 +2,7 @@
     <style>
           #visualisation {
           border-radius: 25px;
-          background: #cc2127;
+          background: #52c41a;
           padding: 20px;
         }
 
@@ -12,7 +12,7 @@
         }
 
         .x_axis path{
-          stroke: #cc2127;
+          stroke: #52c41a;
         }
 
         .y_axis line{
@@ -20,7 +20,7 @@
         }
 
         .y_axis path{
-          stroke: #cc2127;
+          stroke: #52c41a;
         }
 
     </style>
@@ -49,7 +49,7 @@
 
                         xScale = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]).domain([getDate(data[0].date), getDate(data[data.length-1].date)]),
 
-                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data[data.length-1].deaths)]),
+                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data[data.length-1].recovered)]),
 
                         xAxis = d3.axisBottom()
                         .scale(xScale);
@@ -74,7 +74,7 @@
                             return xScale(getDate(d.date));
                         })
                         .y(function(d) {
-                            return yScale(d.deaths);
+                            return yScale(d.recovered);
                         })
                         .curve(d3.curveBasis);
 
@@ -87,7 +87,7 @@
                         var area = d3.area()
                         .x(function(d) { return x(d.date); })
                         .y0(HEIGHT)
-                        .y1(function(d) { return y(d.deaths); });
+                        .y1(function(d) { return y(d.recovered); });
      }
         </script>
 </head>
