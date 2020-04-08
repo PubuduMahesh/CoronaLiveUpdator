@@ -48,7 +48,7 @@
 
                         xScale = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]).domain([getDate(data[0].date), getDate(data[data.length-1].date)]),
 
-                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data[data.length-1].confirmed)]),
+                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data[data.length-1].value)]),
 
                         xAxis = d3.axisBottom()
                         .scale(xScale);
@@ -73,7 +73,7 @@
                             return xScale(getDate(d.date));
                         })
                         .y(function(d) {
-                            return yScale(d.confirmed);
+                            return yScale(d.value);
                         })
                         .curve(d3.curveBasis);
 
@@ -86,7 +86,7 @@
                         var area = d3.area()
                         .x(function(d) { return x(d.date); })
                         .y0(HEIGHT)
-                        .y1(function(d) { return y(d.confirmed); });
+                        .y1(function(d) { return y(d.value); });
      }
         </script>
 </head>

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private CardView cardViewTotalCases;
     private CardView cardViewTotalDeaths;
     private CardView cardViewTotalRecovers;
+    private CardView cardViewActiveCases;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         cardViewTotalCases = (CardView) findViewById(R.id.card_total_cases);
         cardViewTotalDeaths = (CardView) findViewById(R.id.card_total_deaths);
         cardViewTotalRecovers = (CardView) findViewById(R.id.card_total_recovers);
+        cardViewActiveCases = (CardView) findViewById(R.id.card_active_cases);
 
         getSupportActionBar().setTitle("   COVID-19 SRI LANKA UPDATER");
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#20d2f4")));
@@ -113,6 +115,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onLongClick(View v) {
                 openGraphDrawingFragment(ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT);
+                return true;
+            }
+        });
+
+        cardViewActiveCases.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                openGraphDrawingFragment(ConstantToolkit.DAILY_ACTIVE_CASES_FRAGMENT);
                 return true;
             }
         });

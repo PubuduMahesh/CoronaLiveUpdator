@@ -2,7 +2,7 @@
     <style>
           #visualisation {
           border-radius: 25px;
-          background: #cc2127;
+          background: #743595;
           padding: 20px;
         }
 
@@ -12,7 +12,7 @@
         }
 
         .x_axis path{
-          stroke: #cc2127;
+          stroke: #743595;
         }
 
         .y_axis line{
@@ -20,7 +20,7 @@
         }
 
         .y_axis path{
-          stroke: #cc2127;
+          stroke: #743595;
         }
 
     </style>
@@ -35,8 +35,7 @@
             return new Date(data);
         }
 
-        function loadLinearChart(data) {
-        console.log("text");
+        function loadLinearChart(data,data1,data2) {
                     var vis = d3.select("#visualisation"),
                         WIDTH = 1000,
                         HEIGHT = 300,
@@ -49,7 +48,7 @@
 
                         xScale = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]).domain([getDate(data[0].date), getDate(data[data.length-1].date)]),
 
-                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data[data.length-1].value)]),
+                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data1[data1.length-1].value)]),
 
                         xAxis = d3.axisBottom()
                         .scale(xScale);
@@ -84,7 +83,19 @@
                         .attr('stroke-width', 2)
                         .attr('fill', 'none');
 
-                        var area = d3.area()
+                    vis.append('svg:path')
+                        .attr('d', lineGen(data1))
+                        .attr('stroke', 'white')
+                        .attr('stroke-width', 2)
+                        .attr('fill', 'none');
+
+                    vis.append('svg:path')
+                        .attr('d', lineGen(data2))
+                        .attr('stroke', 'white')
+                        .attr('stroke-width', 2)
+                        .attr('fill', 'none');
+
+                    var area = d3.area()
                         .x(function(d) { return x(d.date); })
                         .y0(HEIGHT)
                         .y1(function(d) { return y(d.value); });

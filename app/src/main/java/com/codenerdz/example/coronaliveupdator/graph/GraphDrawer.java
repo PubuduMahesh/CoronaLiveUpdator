@@ -94,6 +94,11 @@ public class GraphDrawer extends DialogFragment {
             webView.loadUrl("file:///android_asset/"+"html/dailyRecoversLineChart.html");
             graphType = ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT;
         }
+        else if(getFragmentManager().findFragmentByTag(ConstantToolkit.DAILY_ACTIVE_CASES_FRAGMENT) != null)
+        {
+            webView.loadUrl("file:///android_asset/"+"html/activeCases.html");
+            graphType = ConstantToolkit.DAILY_ACTIVE_CASES_FRAGMENT;
+        }
 
     }
 
@@ -101,54 +106,89 @@ public class GraphDrawer extends DialogFragment {
     {
         RequestQueue queue = Volley.newRequestQueue(getContext());
         String url ="https://pomber.github.io/covid19/timeseries.json";
-        JsonObjectRequest request = new JsonObjectRequest(url, null,
+        final JsonObjectRequest request = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         if (null != response) {
                             try {
                                 jsonArraySL = response.getJSONArray("Sri Lanka");
-                                StringBuilder textSL = new StringBuilder();
-                                textSL.append("[");
-                                modifyStringBuilder(textSL);
 
-                                textSL.deleteCharAt(textSL.length()-1);
-                                textSL.append("]");
+                                switch (graphType)
+                                {
+                                    case ConstantToolkit.DAILY_CONFIRMED_CASES_FRAGMENT:
+                                        webView.loadUrl("javascript:loadLinearChart" +
+                                                "("+modifyStringBuilder(ConstantToolkit.
+                                                API_CONFIRMED)+")");
+                                        break;
+                                    case ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT:
+                                        webView.loadUrl("javascript:loadLinearChart" +
+                                                "("+modifyStringBuilder(ConstantToolkit.
+                                                API_DEATH).toString()+")");
+                                        break;
+                                    case ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT:
+                                        webView.loadUrl("javascript:loadLinearChart" +
+                                                "("+modifyStringBuilder(ConstantToolkit.
+                                                API_RECOVERED).toString()+")");
+                                        break;
+                                    case ConstantToolkit.DAILY_ACTIVE_CASES_FRAGMENT:
+                                        webView.loadUrl("javascript:loadLinearChart" +
+                                                "("+modifyStringBuilder(ConstantToolkit.
+                                                API_ACTIVE).toString()+","+modifyStringBuilder
+                                                (ConstantToolkit.API_CONFIRMED).toString()+","
+                                                +modifyStringBuilder(ConstantToolkit.
+                                                API_RECOVERED).toString()+")");
+                                        break;
+                                    default:
+                                        break;
 
-                                webView.loadUrl("javascript:loadLinearChart("+textSL.toString()+")");
+                                }
+
                             } catch (Exception e) {
-                                //e.printStackTrace();
+
                             }
                         }
                     }
 
-                    private StringBuilder modifyStringBuilder(StringBuilder textSL) throws JSONException {
-                        String apiSelectionAttribute = "";
-                        switch (graphType)
-                        {
-                            case ConstantToolkit.DAILY_CONFIRMED_CASES_FRAGMENT:
-                                apiSelectionAttribute = "confirmed";
-                                break;
-                            case ConstantToolkit.DAILY_DEATH_CASES_FRAGMENT:
-                                apiSelectionAttribute = "deaths";
-                                break;
-                            case ConstantToolkit.DAILY_RECOVERS_CASES_FRAGMENT:
-                                apiSelectionAttribute = "recovered";
-                                break;
-                            default:
-                                    break;
+                    private StringBuilder modifyStringBuilder(String apiSelectionAttribute) throws JSONException
+                    {
 
-                        }
-                        for(int i=0;i<jsonArraySL.length();i++)
+                        StringBuilder textSL = new StringBuilder();
+                        textSL.append("[");
+                        if(apiSelectionAttribute.equals(ConstantToolkit.API_ACTIVE))
                         {
-                            textSL.append("{\"date\":\""+jsonArraySL.getJSONObject(i).
-                                    get("date").toString()+"\",\""+apiSelectionAttribute+"\":\""+
-                                    jsonArraySL.getJSONObject(i).
-                                            get(apiSelectionAttribute).toString()
-                                    +"\"},");
+                            for(int i=0;i<jsonArraySL.length();i++)
+                            {
+                                textSL.append("{\"date\":\""+jsonArraySL.getJSONObject(i).
+                                        get("date").toString()+"\",\"value\":\""+
+                                        calculateActiveCases(i)+"\"},");
 
+                            }
                         }
+                        else
+                        {
+                            for(int i=0;i<jsonArraySL.length();i++)
+                            {
+                                textSL.append("{\"date\":\""+jsonArraySL.getJSONObject(i).
+                                        get("date").toString()+"\",\"value\":\""+
+                                        jsonArraySL.getJSONObject(i).
+                                                get(apiSelectionAttribute).toString()
+                                        +"\"},");
+
+                            }
+                        }
+                        textSL.deleteCharAt(textSL.length()-1);
+                        textSL.append("]");
                         return textSL;
+                    }
+
+                    private String calculateActiveCases(int i) throws JSONException
+                    {
+                        int returnValue =  Integer.parseInt(jsonArraySL.getJSONObject(i).
+                                get("confirmed").toString())-Integer.
+                                parseInt(jsonArraySL.getJSONObject(i).get("recovered").toString());
+
+                        return String.valueOf(returnValue);
                     }
                 },new Response.ErrorListener() {
 
