@@ -25,6 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+
 public class GraphDrawer extends DialogFragment {
 
     private View view;
@@ -159,8 +161,8 @@ public class GraphDrawer extends DialogFragment {
                         {
                             for(int i=0;i<jsonArraySL.length();i++)
                             {
-                                textSL.append("{\"date\":\""+jsonArraySL.getJSONObject(i).
-                                        get("date").toString()+"\",\"value\":\""+
+                                textSL.append("{\"date\":\""+formatDate(jsonArraySL.getJSONObject(i).
+                                        get("date").toString())+"\",\"value\":\""+
                                         calculateActiveCases(i)+"\"},");
 
                             }
@@ -169,8 +171,8 @@ public class GraphDrawer extends DialogFragment {
                         {
                             for(int i=0;i<jsonArraySL.length();i++)
                             {
-                                textSL.append("{\"date\":\""+jsonArraySL.getJSONObject(i).
-                                        get("date").toString()+"\",\"value\":\""+
+                                textSL.append("{\"date\":\""+formatDate(jsonArraySL.getJSONObject(i).
+                                        get("date").toString())+"\",\"value\":\""+
                                         jsonArraySL.getJSONObject(i).
                                                 get(apiSelectionAttribute).toString()
                                         +"\"},");
@@ -180,6 +182,15 @@ public class GraphDrawer extends DialogFragment {
                         textSL.deleteCharAt(textSL.length()-1);
                         textSL.append("]");
                         return textSL;
+                    }
+
+                    private String formatDate(String date) {
+                        DecimalFormat formatter = new DecimalFormat("00");
+                        String[] dateMonthArray = date.split("-");
+                        return (dateMonthArray[0]+"-"+
+                                String.valueOf(formatter.format(Integer.parseInt(dateMonthArray[1])))+"-"+
+                                String.valueOf(formatter.format(Integer.parseInt(dateMonthArray[2])))).toString();
+
                     }
 
                     private String calculateActiveCases(int i) throws JSONException
