@@ -22,6 +22,16 @@
           stroke: #ff6d00;
         }
 
+        .grid line {
+          stroke: lightgrey;
+          stroke-opacity: 0.3;
+          stroke-dasharray: 5,5;
+        }
+
+        .grid path {
+          stroke-width: 0;
+        }
+
     </style>
 <head>
     <!--script type="text/javascript" src="file:///android_asset/js/d3.min.js" ></script-->
@@ -77,7 +87,8 @@
                         .append('text')
                           .style("opacity", 0)
                           .attr("text-anchor", "left")
-                          .attr("alignment-baseline", "middle");
+                          .attr("alignment-baseline", "middle")
+                          .style("font-weight","bold");
 
                     vis.append('rect')
                         .style("fill", "none")
@@ -114,6 +125,12 @@
                         .y0(HEIGHT)
                         .y1(function(d) { return y(d.value); });
 
+                    vis.append("g")
+                      .attr("class", "grid")
+                      .call(make_y_gridlines()
+                          .tickSize(-WIDTH)
+                      )
+
                         function mouseover()
                         {
                             focus.style("opacity", 1)
@@ -132,7 +149,7 @@
                                   .attr("cy", yRange(selectedData.value))
 
                             focusText
-                              .html("x:" + selectedData.date + "  -  " + "y:" + selectedData.value)
+                              .html(selectedData.date + "  :  "+ selectedData.value)
                               .attr("x", xScale(getDate(selectedData.date))+15)
                               .attr("y", yRange(selectedData.value))
                         }
@@ -143,11 +160,16 @@
                             focusText.style("opacity", 0)
                         }
 
+                        function make_y_gridlines() {
+                            return d3.axisLeft(yRange)
+                                .ticks(10)
+                        }
+
     }
         </script>
 </head>
 <body>
-<strong></strong>
-<svg id="visualisation" width="5000" height="350"></svg>
+<strong>Daily Confirmed Cases</strong>
+<svg id="visualisation" width="1050" height="350"></svg>
 </body>
 </html>
