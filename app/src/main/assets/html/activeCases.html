@@ -23,6 +23,16 @@
           stroke: #743595;
         }
 
+        .grid line {
+          stroke: lightgrey;
+          stroke-opacity: 0.3;
+          stroke-dasharray: 5,5;
+        }
+
+        .grid path {
+          stroke-width: 0;
+        }
+
     </style>
 <head>
     <!--script type="text/javascript" src="file:///android_asset/js/d3.min.js" ></script-->
@@ -46,9 +56,12 @@
                             left: 50
                         },
 
-                        xScale = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]).domain([getDate(data[0].date), getDate(data[data.length-1].date)]),
+                        xRange = d3.scaleTime().range([MARGINS.left, WIDTH - MARGINS.right]);
+                        yRange = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]);
 
-                        yScale = d3.scaleLinear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([0, parseInt(data1[data1.length-1].value)]),
+                        xScale = xRange.domain([getDate(data[0].date), getDate(data[data.length-1].date)]),
+
+                        yScale = yRange.domain([0, parseInt(data1[data1.length-1].value)]),
 
                         xAxis = d3.axisBottom()
                         .scale(xScale);
@@ -56,17 +69,43 @@
                         yAxis = d3.axisLeft()
                         .scale(yScale);
 
-                    vis.append("svg:g")
+                    vis.append("g")
                         .attr("class", "x_axis")
                         .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
                         .attr('stroke','white')
                         .call(xAxis);
 
-                    vis.append("svg:g")
+                    vis.append("g")
                         .attr("class", "y_axis")
                         .attr("transform", "translate(" + (MARGINS.left) + ",0)")
                         .attr('stroke','white')
                         .call(yAxis);
+
+                    var bisect = d3.bisector(function(d) { return d.date; }).left;
+
+                    var focusText = vis
+                        .append('g')
+                        .append('text')
+                          .style("opacity", 0)
+                          .attr("text-anchor", "left")
+                          .attr("alignment-baseline", "middle")
+                          .style("font-weight","bold");
+
+                    vis.append('rect')
+                        .style("fill", "none")
+                        .style("pointer-events", "all")
+                        .attr('width', WIDTH)
+                        .attr('height', HEIGHT)
+                        .on('mouseover', mouseover)
+                        .on('mousemove', mousemove)
+                        .on('mouseout', mouseout);
+
+                    var focus = vis.append('g')
+                          .append('circle')
+                          .style("fill", "none")
+                          .attr("stroke", "black")
+                          .attr('r', 4.5)
+                          .style("opacity", 0)
 
                     var lineGen = d3.line()
                         .x(function(d) {
@@ -83,27 +122,54 @@
                         .attr('stroke-width', 2)
                         .attr('fill', 'none');
 
-                    vis.append('svg:path')
-                        .attr('d', lineGen(data1))
-                        .attr('stroke', 'white')
-                        .attr('stroke-width', 2)
-                        .attr('fill', 'none');
-
-                    vis.append('svg:path')
-                        .attr('d', lineGen(data2))
-                        .attr('stroke', 'white')
-                        .attr('stroke-width', 2)
-                        .attr('fill', 'none');
-
                     var area = d3.area()
                         .x(function(d) { return x(d.date); })
                         .y0(HEIGHT)
                         .y1(function(d) { return y(d.value); });
+
+                    vis.append("g")
+                      .attr("class", "grid")
+                      .call(make_y_gridlines()
+                          .tickSize(-WIDTH))
+
+                        function mouseover()
+                        {
+                            focus.style("opacity", 1)
+                            focusText.style("opacity",1)
+                        }
+
+                        function mousemove()
+                        {
+                            // recover coordinate we need
+                            var x0 = xRange.invert(d3.mouse(this)[0]);
+                            var parseDate = d3.timeFormat("%Y-%m-%d");
+                            var i = bisect(data,parseDate(x0) , 1);
+                            selectedData = data[i];
+
+                            focus.attr("cx", xScale(getDate(selectedData.date)))
+                                  .attr("cy", yRange(selectedData.value))
+
+                            focusText
+                              .html(selectedData.date + "  :  "+ selectedData.value)
+                              .attr("x", xScale(getDate(selectedData.date))+15)
+                              .attr("y", yRange(selectedData.value))
+                        }
+
+                        function mouseout()
+                        {
+                            focus.style("opacity", 0)
+                            focusText.style("opacity", 0)
+                        }
+
+                        function make_y_gridlines() {
+                            return d3.axisLeft(yRange)
+                                .ticks(10)
+                        }
      }
         </script>
 </head>
 <body>
-<strong></strong>
+<strong>Active Cases</strong>
 <svg id="visualisation" width="5000" height="350"></svg>
 </body>
 </html>

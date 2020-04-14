@@ -128,8 +128,7 @@
                     vis.append("g")
                       .attr("class", "grid")
                       .call(make_y_gridlines()
-                          .tickSize(-WIDTH)
-                      )
+                          .tickSize(-WIDTH))
 
                         function mouseover()
                         {
@@ -170,6 +169,6 @@
 </head>
 <body>
 <strong>Daily Confirmed Cases</strong>
-<svg id="visualisation" width="1050" height="350"></svg>
+<svg id="visualisation" width="5000" height="350"></svg>
 </body>
 </html>
